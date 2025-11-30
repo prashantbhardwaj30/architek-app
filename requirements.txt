@@ -1,5 +1,7 @@
 streamlit
 llama-index
-llama-index-llms-gemini
-llama-index-embeddings-gemini
+llama-index-llms-google-genai
+llama-index-embeddings-google-genai
 python-dotenv
+pypdf
+
