@@ -3,8 +3,8 @@ import tempfile
 
 import streamlit as st
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
-from llama_index.llms.gemini import Gemini
-from llama_index.embeddings.gemini import GeminiEmbedding
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
 
 
 st.set_page_config(
@@ -30,38 +30,36 @@ with st.sidebar:
     st.markdown("---")
 
     api_key = st.text_input(
-        "Enter Gemini API Key",
+        "Enter OpenAI API Key",
         type="password",
-        help="Get it from ai.google.dev",
+        help="Get it from platform.openai.com",
     )
 
     st.markdown("---")
-    st.info("💡 **Pro Tip:** This uses Gemini Pro for analysis.")
+    st.info("💡 **Pro Tip:** This uses GPT-4 for deep analysis.")
 
-# Initialize models with error handling
 if api_key:
-    os.environ["GOOGLE_API_KEY"] = api_key
+    os.environ["OPENAI_API_KEY"] = api_key
     
     try:
-        Settings.llm = Gemini(
-            model="models/gemini-pro",
+        Settings.llm = OpenAI(
+            model="gpt-4o-mini",  # Fast and cheap
             api_key=api_key,
             temperature=0.2,
         )
 
-        Settings.embed_model = GeminiEmbedding(
-            model_name="models/embedding-001",
+        Settings.embed_model = OpenAIEmbedding(
+            model="text-embedding-3-small",
             api_key=api_key,
         )
         
         models_initialized = True
         
     except Exception as e:
-        st.error(f"❌ Failed to initialize Gemini models: {str(e)}")
-        st.info("💡 Make sure your API key is valid and from ai.google.dev")
+        st.error(f"❌ Failed to initialize models: {str(e)}")
         models_initialized = False
 else:
-    st.warning("⚠️ Please enter your Gemini API Key to initialize the Architect.")
+    st.warning("⚠️ Please enter your OpenAI API Key to initialize the Architect.")
     models_initialized = False
 
 st.header("Build Your AI SaaS Blueprint")
@@ -108,9 +106,7 @@ if uploaded_file and api_key and models_initialized:
                 st.success("✅ Blueprint Generated. Start building.")
                 
         except Exception as e:
-            st.error(f"❌ Error processing document: {str(e)}")
+            st.error(f"❌ Error: {str(e)}")
             
 elif uploaded_file and not models_initialized:
     st.error("⚠️ Models not initialized. Check your API key.")
-elif not api_key:
-    st.info("🔑 Enter your Gemini API key in the sidebar to start.")
