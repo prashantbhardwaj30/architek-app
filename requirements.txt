@@ -1,7 +1,16 @@
 streamlit
-llama-index
-llama-index-llms-gemini
-llama-index-embeddings-gemini
-google-generativeai
+
+# Core LlamaIndex (pin to stable version)
+llama-index==0.11.23
+llama-index-core==0.11.23
+
+# Google GenAI integrations
+llama-index-llms-google-genai==0.2.5
+llama-index-embeddings-google-genai==0.2.2
+
+# Google Gen AI SDK
+google-genai>=1.0.0
+
+# Utilities
 python-dotenv
 pypdf
