@@ -3,8 +3,8 @@ import tempfile
 
 import streamlit as st
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
-from llama_index.llms.google_genai import GoogleGenAI
-from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from llama_index.llms.gemini import Gemini
+from llama_index.embeddings.gemini import GeminiEmbedding
 
 
 # --- 1. CONFIGURATION & SETUP ---
@@ -45,15 +45,16 @@ with st.sidebar:
 if api_key:
     os.environ["GOOGLE_API_KEY"] = api_key
 
-    # CRITICAL: NO "models/" prefix, NO "-001" suffix
-    Settings.llm = GoogleGenAI(
-        model="gemini-1.5-flash",  # ← Bare name only!
+    # Use the old gemini integration (google-generativeai SDK)
+    # This works reliably with models/gemini-pro format
+    Settings.llm = Gemini(
+        model="models/gemini-pro",  # Stable model that exists
         api_key=api_key,
         temperature=0.2,
     )
 
-    Settings.embed_model = GoogleGenAIEmbedding(
-        model_name="text-embedding-004",  # ← Bare name only!
+    Settings.embed_model = GeminiEmbedding(
+        model="models/embedding-001",
         api_key=api_key,
     )
 else:
