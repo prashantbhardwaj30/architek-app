@@ -25,14 +25,44 @@ with st.sidebar:
         help="Get it from ai.google.dev/aistudio",
     )
     st.markdown("---")
-    st.info("💡 **Using Gemini 1.5 Flash**")
 
 if api_key:
     genai.configure(api_key=api_key)
     
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        models_ready = True
+        # List available models
+        available_models = []
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                available_models.append(m.name)
+        
+        st.sidebar.success(f"✅ API Key Valid")
+        st.sidebar.info(f"📋 Available models:\n\n" + "\n".join([f"• {m.split('/')[-1]}" for m in available_models[:5]]))
+        
+        # Try to use the best available model
+        model_to_use = None
+        preferred_models = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
+        
+        for preferred in preferred_models:
+            for available in available_models:
+                if preferred in available:
+                    model_to_use = available.split('/')[-1]  # Remove 'models/' prefix
+                    break
+            if model_to_use:
+                break
+        
+        if not model_to_use and available_models:
+            # Use first available model
+            model_to_use = available_models[0].split('/')[-1]
+        
+        if model_to_use:
+            model = genai.GenerativeModel(model_to_use)
+            models_ready = True
+            st.sidebar.info(f"🤖 Using: **{model_to_use}**")
+        else:
+            st.error("❌ No compatible models found")
+            models_ready = False
+            
     except Exception as e:
         st.error(f"❌ API Key Error: {str(e)}")
         models_ready = False
@@ -79,7 +109,6 @@ OUTPUT FORMAT (Strictly follow this structure):
 * Identify the "Small Scale" parameters (e.g., "Don't train, use RAG with top_k=5").
 """
             
-            model = genai.GenerativeModel('gemini-1.5-flash')
             response = model.generate_content(prompt)
             
             st.markdown("---")
