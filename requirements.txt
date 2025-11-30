@@ -1,7 +1,6 @@
 streamlit
 llama-index
-llama-index-llms-google-genai
-llama-index-embeddings-google-genai
-google-genai==1.0.0  # ← Pin to older version that works
+llama-index-llms-gemini
+llama-index-embeddings-gemini
 python-dotenv
 pypdf
