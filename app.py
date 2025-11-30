@@ -33,8 +33,8 @@ with st.sidebar:
 if api_key:
     os.environ["GOOGLE_API_KEY"] = api_key
     # Configure Gemini 1.5 Flash for Speed & Context
-    Settings.llm = Gemini(model="models/gemini-1.5-flash", temperature=0.2)
-    Settings.embed_model = GeminiEmbedding(model="models/text-embedding-004")
+    Settings.llm = Gemini(model="gemini-1.5-flash", temperature=0.2)
+    Settings.embed_model = GeminiEmbedding(model="text-embedding-004")
 else:
     st.warning("⚠️ Please enter your Gemini API Key to initialize the Architect.")
 
@@ -88,3 +88,4 @@ if uploaded_file and api_key:
             st.markdown(response.response)
             
             st.success("✅ Blueprint Generated. Start building.")
+
