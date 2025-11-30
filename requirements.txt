@@ -1,5 +1,6 @@
 streamlit
-llama-index
-llama-index-llms-openai
-llama-index-embeddings-openai
+google-generativeai
 pypdf
+langchain
+langchain-google-genai
+chromadb
