@@ -43,18 +43,17 @@ with st.sidebar:
 
 # --- 3. THE \"BRAIN\" SETUP ---
 if api_key:
-    os.environ["GOOGLE_API_KEY"] = api_key  # some libs use this env var
+    os.environ["GOOGLE_API_KEY"] = api_key
 
-    # LLM via Google GenAI SDK (new stack)
+    # CRITICAL FIX: Remove "models/" prefix - use just the model name
     Settings.llm = GoogleGenAI(
-        model="gemini-1.5-flash",   # or "gemini-1.5-flash-latest", "gemini-2.0-flash", etc.
+        model="gemini-1.5-flash-latest",  # No "models/" prefix!
         api_key=api_key,
         temperature=0.2,
     )
 
-    # Embeddings via Google GenAI
     Settings.embed_model = GoogleGenAIEmbedding(
-        model_name="text-embedding-005",  # recommended current embedding model
+        model_name="text-embedding-004",  # No "models/" prefix!
         api_key=api_key,
     )
 else:
