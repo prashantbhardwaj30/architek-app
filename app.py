@@ -30,7 +30,6 @@ with st.sidebar:
 if api_key:
     genai.configure(api_key=api_key)
     
-    # Test if API key works
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
         models_ready = True
@@ -49,38 +48,36 @@ uploaded_file = st.file_uploader("Upload ArXiv PDF", type=["pdf"])
 if uploaded_file and models_ready:
     with st.spinner("Analyzing... (10-20s)"):
         try:
-            # Extract text from PDF
             pdf_reader = PdfReader(uploaded_file)
             text = ""
             for page in pdf_reader.pages:
                 text += page.extract_text()
             
-            # Truncate if too long (Gemini has ~1M token limit)
-            text = text[:100000]  # Roughly 25k tokens
+            text = text[:100000]
             
             prompt = f"""
-            You are a Senior AI Solutions Architect. Analyze this research paper for a Solopreneur who wants to build a SaaS.
-            
-            RESEARCH PAPER:
-            {text}
-            
-            OUTPUT FORMAT (Strictly follow this structure):
-            
-            ## 1. Core Mechanism (The Code Logic)
-            * **Key Concept:** One sentence explaining the breakthrough.
-            * **Critical Equation:** Extract the most important formula (in LaTeX).
-            * **Plain English:** Explain what that formula DOES.
-            * **Pseudo-Code:** Write a Python function (def) representing this core logic.
+You are a Senior AI Solutions Architect. Analyze this research paper for a Solopreneur who wants to build a SaaS.
 
-            ## 2. Product-Market Translation (The Money)
-            * **The "Unfair Advantage":** What does this tech do better/cheaper than current tools?
-            * **Under-Tapped Niche:** Identify ONE specific, boring, high-margin industry (e.g., Legal, Oil, Medical) that needs this.
-            * **SaaS Idea:** Name and describe a micro-SaaS product for that niche.
+RESEARCH PAPER:
+{text}
 
-            ## 3. The MVP Checklist (The 7-Day Plan)
-            * List 5 steps to build a Minimum Viable Product using existing APIs (Gemini/OpenAI) + LangChain.
-            * Identify the "Small Scale" parameters (e.g., "Don't train, use RAG with top_k=5").
-            """
+OUTPUT FORMAT (Strictly follow this structure):
+
+## 1. Core Mechanism (The Code Logic)
+* **Key Concept:** One sentence explaining the breakthrough.
+* **Critical Equation:** Extract the most important formula (in LaTeX).
+* **Plain English:** Explain what that formula DOES.
+* **Pseudo-Code:** Write a Python function (def) representing this core logic.
+
+## 2. Product-Market Translation (The Money)
+* **The "Unfair Advantage":** What does this tech do better/cheaper than current tools?
+* **Under-Tapped Niche:** Identify ONE specific, boring, high-margin industry (e.g., Legal, Oil, Medical) that needs this.
+* **SaaS Idea:** Name and describe a micro-SaaS product for that niche.
+
+## 3. The MVP Checklist (The 7-Day Plan)
+* List 5 steps to build a Minimum Viable Product using existing APIs (Gemini/OpenAI) + LangChain.
+* Identify the "Small Scale" parameters (e.g., "Don't train, use RAG with top_k=5").
+"""
             
             model = genai.GenerativeModel('gemini-1.5-flash')
             response = model.generate_content(prompt)
