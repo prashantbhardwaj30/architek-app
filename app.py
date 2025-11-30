@@ -14,7 +14,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Hide Streamlit default branding for a pro look
+# Hide Streamlit default branding
 st.markdown(
     """
     <style>
@@ -26,7 +26,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- 2. SIDEBAR: CREDENTIALS & BRANDING ---
+# --- 2. SIDEBAR ---
 with st.sidebar:
     st.title("🏛️ ArchiTek")
     st.markdown("**Whitepaper to Wallet.**")
@@ -35,25 +35,25 @@ with st.sidebar:
     api_key = st.text_input(
         "Enter Gemini API Key",
         type="password",
-        help="Get it from Google AI Studio / Gemini API console",
+        help="Get it from Google AI Studio",
     )
 
     st.markdown("---")
     st.info("💡 **Pro Tip:** Use Flash for speed, Pro for deeper reasoning.")
 
-# --- 3. THE \"BRAIN\" SETUP ---
+# --- 3. INITIALIZE MODELS ---
 if api_key:
     os.environ["GOOGLE_API_KEY"] = api_key
 
-    # CRITICAL FIX: Remove "models/" prefix - use just the model name
+    # CRITICAL: NO "models/" prefix, NO "-001" suffix
     Settings.llm = GoogleGenAI(
-        model="gemini-1.5-flash-latest",  # No "models/" prefix!
+        model="gemini-1.5-flash",  # ← Bare name only!
         api_key=api_key,
         temperature=0.2,
     )
 
     Settings.embed_model = GoogleGenAIEmbedding(
-        model_name="text-embedding-004",  # No "models/" prefix!
+        model_name="text-embedding-004",  # ← Bare name only!
         api_key=api_key,
     )
 else:
@@ -103,6 +103,6 @@ if uploaded_file and api_key:
                 st.markdown(response.response)
                 st.success("✅ Blueprint Generated. Start building.")
             except Exception as e:
-                st.error(f"❌ Something went wrong while querying the index: {e}")
+                st.error(f"❌ Error: {e}")
 elif not api_key:
     st.info("🔑 Enter your Gemini API key in the sidebar to start.")
