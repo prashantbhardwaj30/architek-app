@@ -1,12 +1,11 @@
 import os
 import tempfile
+
 import streamlit as st
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
+from llama_index.llms.google_genai import GoogleGenAI
+from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 
-# --- V1 IMPORTS (Stable Stack) ---
-# We revert to 'Gemini' (V1) to bypass the V2 ClientError issues
-from llama_index.llms.gemini import Gemini
-from llama_index.embeddings.gemini import GeminiEmbedding
 
 # --- 1. CONFIGURATION & SETUP ---
 st.set_page_config(
@@ -15,7 +14,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Hide Streamlit default branding
+# Hide Streamlit default branding for a pro look
 st.markdown(
     """
     <style>
@@ -27,7 +26,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- 2. SIDEBAR: CREDENTIALS ---
+# --- 2. SIDEBAR: CREDENTIALS & BRANDING ---
 with st.sidebar:
     st.title("🏛️ ArchiTek")
     st.markdown("**Whitepaper to Wallet.**")
@@ -36,27 +35,26 @@ with st.sidebar:
     api_key = st.text_input(
         "Enter Gemini API Key",
         type="password",
-        help="Get it free from Google AI Studio",
+        help="Get it from Google AI Studio / Gemini API console",
     )
 
     st.markdown("---")
-    st.info("💡 **Status:** V1 Stack (Stable) Active")
+    st.info("💡 **Pro Tip:** Use Flash for speed, Pro for deeper reasoning.")
 
-# --- 3. THE "BRAIN" SETUP ---
+# --- 3. THE \"BRAIN\" SETUP ---
 if api_key:
-    os.environ["GOOGLE_API_KEY"] = api_key
+    os.environ["GOOGLE_API_KEY"] = api_key  # some libs use this env var
 
-    # LLM: V1 standard naming (with 'models/' prefix)
-    Settings.llm = Gemini(
-        model="models/gemini-1.5-flash", 
-        temperature=0.2,
+    # LLM via Google GenAI SDK (new stack)
+    Settings.llm = GoogleGenAI(
+        model="gemini-1.5-flash",   # or "gemini-1.5-flash-latest", "gemini-2.0-flash", etc.
         api_key=api_key,
+        temperature=0.2,
     )
 
-    # Embeddings: Using 'embedding-001' which is universally available
-    # 'text-embedding-004' sometimes causes 404s in V1 without specific config
-    Settings.embed_model = GeminiEmbedding(
-        model_name="models/embedding-001", 
+    # Embeddings via Google GenAI
+    Settings.embed_model = GoogleGenAIEmbedding(
+        model_name="text-embedding-005",  # recommended current embedding model
         api_key=api_key,
     )
 else:
@@ -69,53 +67,43 @@ st.markdown("Upload a research paper to generate the **Implementation Blueprint*
 uploaded_file = st.file_uploader("Upload ArXiv PDF", type=["pdf"])
 
 if uploaded_file and api_key:
-    with st.spinner("Analyzing Architecture... (This may take 10-20s)"):
-        try:
-            # Save uploaded file temporarily
-            with tempfile.TemporaryDirectory() as temp_dir:
-                temp_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(temp_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
+    with st.spinner("Analyzing Architecture... (This may take 10–20s)"):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = os.path.join(temp_dir, uploaded_file.name)
+            with open(temp_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-                # --- THE RAG PIPELINE ---
-                documents = SimpleDirectoryReader(temp_dir).load_data()
-                
-                # Create Index
-                index = VectorStoreIndex.from_documents(documents)
-                query_engine = index.as_query_engine()
+            documents = SimpleDirectoryReader(temp_dir).load_data()
+            index = VectorStoreIndex.from_documents(documents)
+            query_engine = index.as_query_engine()
 
-                # --- THE PROMPT ---
-                prompt = """
-                You are a Senior AI Solutions Architect. Analyze this research paper for a Solopreneur who wants to build a SaaS.
-                
-                OUTPUT FORMAT (Strictly follow this structure):
-                
-                ## 1. Core Mechanism (The Code Logic)
-                * **Key Concept:** One sentence explaining the breakthrough.
-                * **Critical Equation:** Extract the most important formula (in LaTeX).
-                * **Plain English:** Explain what that formula DOES.
-                * **Pseudo-Code:** Write a Python function (def) representing this core logic.
+            prompt = """
+            You are a Senior AI Solutions Architect. Analyze this research paper for a Solopreneur who wants to build a SaaS.
+            
+            OUTPUT FORMAT (Strictly follow this structure):
+            
+            ## 1. Core Mechanism (The Code Logic)
+            * **Key Concept:** One sentence explaining the breakthrough.
+            * **Critical Equation:** Extract the most important formula (in LaTeX).
+            * **Plain English:** Explain what that formula DOES.
+            * **Pseudo-Code:** Write a Python function (def) representing this core logic.
 
-                ## 2. Product-Market Translation (The Money)
-                * **The "Unfair Advantage":** What does this tech do better/cheaper than current tools?
-                * **Under-Tapped Niche:** Identify ONE specific, boring, high-margin industry (e.g., Legal, Oil, Medical) that needs this.
-                * **SaaS Idea:** Name and describe a micro-SaaS product for that niche.
+            ## 2. Product-Market Translation (The Money)
+            * **The "Unfair Advantage":** What does this tech do better/cheaper than current tools?
+            * **Under-Tapped Niche:** Identify ONE specific, boring, high-margin industry (e.g., Legal, Oil, Medical) that needs this.
+            * **SaaS Idea:** Name and describe a micro-SaaS product for that niche.
 
-                ## 3. The MVP Checklist (The 7-Day Plan)
-                * List 5 steps to build a Minimum Viable Product using existing APIs (Gemini/OpenAI) + LangChain.
-                * Identify the "Small Scale" parameters (e.g., "Don't train, use RAG with top_k=5").
-                """
+            ## 3. The MVP Checklist (The 7-Day Plan)
+            * List 5 steps to build a Minimum Viable Product using existing APIs (Gemini/OpenAI) + LangChain.
+            * Identify the "Small Scale" parameters (e.g., "Don't train, use RAG with top_k=5").
+            """
 
+            try:
                 response = query_engine.query(prompt)
-
-                # --- DISPLAY RESULTS ---
                 st.markdown("---")
                 st.markdown(response.response)
                 st.success("✅ Blueprint Generated. Start building.")
-
-        except Exception as e:
-            st.error(f"❌ Error: {str(e)}")
-            st.info("Tip: Check if your API Key has access to 'Gemini 1.5 Flash' in Google AI Studio.")
-
+            except Exception as e:
+                st.error(f"❌ Something went wrong while querying the index: {e}")
 elif not api_key:
     st.info("🔑 Enter your Gemini API key in the sidebar to start.")
