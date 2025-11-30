@@ -32,8 +32,8 @@ if api_key:
 
     # --- NEW INITIALIZATION (The Fix) ---
     # Uses 'gemini-1.5-flash' directly with the new class
-    Settings.llm = GoogleGenAI(model="gemini-1.5-flash", api_key=api_key)
-    Settings.embed_model = GoogleGenAIEmbedding(model_name="text-embedding-004", api_key=api_key)
+    Settings.llm = GoogleGenAI(model="models/gemini-1.5-flash", api_key=api_key)
+    Settings.embed_model = GoogleGenAIEmbedding(model_name="models/text-embedding-004", api_key=api_key)
 
 else:
     st.warning("⚠️ Please enter your Gemini API Key to initialize the Architect.")
@@ -85,3 +85,4 @@ if uploaded_file and api_key:
             st.markdown(response.response)
 
             st.success("✅ Blueprint Generated. Start building.")
+
