@@ -9,19 +9,45 @@ st.set_page_config(page_title="ArchiTek | Blueprint Engine", page_icon="🏛️"
 # Custom CSS for a professional "Dark Mode" look
 st.markdown("""
 <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* 1. HIDE STREAMLIT BRANDING */
+    #MainMenu {visibility: hidden;} /* Hides the Hamburger Menu */
+    footer {visibility: hidden;}    /* Hides 'Made with Streamlit' */
+    header {visibility: hidden;}    /* Hides the top colored bar */
+    
+    /* 2. HIDE THE 'MANAGE APP' BUTTON (The GitHub Link) */
+    [data-testid="stToolbar"] {visibility: hidden !important;} 
+    
+    /* 3. PROFESSIONAL DARK THEME */
     .stApp {background-color: #0E1117; color: #FAFAFA;}
     
-    /* Make the download button stand out */
-    div.stDownloadButton > button:first-child {
-        background-color: #00FF00;
-        color: #000000;
-        font-weight: bold;
-        border: none;
+    /* 4. CUSTOM BUTTON STYLING */
+    /* Green Download Button */
+    .stDownloadButton > button {
+        background-color: #00FF00 !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+        border: none !important;
+    }
+    
+    /* Purple Validation Button */
+    .stButton > button {
+        background-color: #7B2CBF !important;
+        color: white !important; 
+        font-weight: bold !important;
+        border: 1px solid #9D4EDD !important;
+    }
+    
+    /* 5. REMOVE TOP PADDING (Since we hid the header) */
+    .block-container {
+        padding-top: 2rem !important; 
     }
 </style>
 """, unsafe_allow_html=True)
+
+# --- 2. SESSION STATE (The Memory) ---
+if "blueprint_result" not in st.session_state:
+    st.session_state.blueprint_result = None
+# ... (rest of your code remains the same
 
 # --- 2. SMART AUTH SYSTEM ---
 # Try to load the "Sponsor Key" from Streamlit Secrets
@@ -184,3 +210,4 @@ if uploaded_file and models_ready:
                 else:
                     st.error(f"❌ Analysis Failed. Error details:")
                     st.code(err_str)
+
