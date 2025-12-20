@@ -1,4 +1,5 @@
 import os
+import re
 import streamlit as st
 import google.generativeai as genai
 from PyPDF2 import PdfReader
@@ -56,7 +57,7 @@ with st.sidebar:
     st.caption("Adaptive Intelligence Engine")
     st.markdown("---")
     
-    # --- MISSION BRIEF (The "Black Ops" Inputs) ---
+    # --- MISSION BRIEF ---
     st.subheader("🎯 Mission Brief")
     
     user_persona = st.selectbox(
@@ -82,7 +83,7 @@ with st.sidebar:
         st.warning("⚠️ Manual Auth Required")
         active_key = st.text_input("Enter API Key", type="password")
 
-# --- 4. PROMPT LOGIC (The Brains) ---
+# --- 4. PROMPT LOGIC ---
 def get_persona_prompt(role, industry, text):
     base_prompt = f"Analyze this research paper. Context: {text[:100000]}."
     
@@ -184,54 +185,63 @@ def get_persona_prompt(role, industry, text):
 if active_key:
     genai.configure(api_key=active_key)
     
-    # Model Init
-    try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-    except:
-        st.error("⚠️ System Offline. Check API Key.")
-        st.stop()
+    st.title("ArchiTek // Intel Engine")
+    st.markdown(f"**Mission:** Analyze Research for **{user_persona}** in **{target_industry}**.")
 
-st.title("ArchiTek // Intel Engine")
-st.markdown(f"**Mission:** Analyze Research for **{user_persona}** in **{target_industry}**.")
+    uploaded_file = st.file_uploader("Upload Target Dossier (PDF)", type=["pdf"])
 
-uploaded_file = st.file_uploader("Upload Target Dossier (PDF)", type=["pdf"])
+    if uploaded_file and st.button("Execute Analysis"):
+        with st.spinner("Extracting Intel..."):
+            try:
+                # 1. READ PDF
+                pdf = PdfReader(uploaded_file)
+                text = "".join([p.extract_text() for p in pdf.pages])
+                
+                # 2. SMART MODEL SELECTOR (THE FIX)
+                # Instead of hardcoding, we ask Google what models are available
+                available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                
+                if not available_models:
+                    st.error("❌ No models found. Check your API Key permissions.")
+                    st.stop()
+                
+                # Prioritize Flash for speed, then Pro, then others
+                model_name = next((m for m in available_models if 'flash' in m), None)
+                if not model_name:
+                    model_name = next((m for m in available_models if 'pro' in m), available_models[0])
+                
+                # Clean the model name (remove 'models/' prefix if needed for instantiation)
+                final_model_name = model_name.split('/')[-1]
+                model = genai.GenerativeModel(final_model_name)
+                
+                # 3. GENERATE
+                final_prompt = get_persona_prompt(user_persona, target_industry, text)
+                response = model.generate_content(final_prompt)
+                st.session_state.analysis_result = response.text
+                
+            except Exception as e:
+                # Better Error Messages
+                if "429" in str(e) or "ResourceExhausted" in str(e):
+                    st.error("⚠️ **Quota Exceeded.** The sponsor key is overloaded. Use your own key in the sidebar.")
+                else:
+                    st.error(f"❌ Mission Failed: {str(e)}")
 
-if uploaded_file and st.button("Execute Analysis"):
-    with st.spinner("Extracting Intel..."):
-        try:
-            pdf = PdfReader(uploaded_file)
-            text = "".join([p.extract_text() for p in pdf.pages])
-            
-            # Dynamic Prompting
-            final_prompt = get_persona_prompt(user_persona, target_industry, text)
-            
-            response = model.generate_content(final_prompt)
-            st.session_state.analysis_result = response.text
-            
-        except Exception as e:
-            st.error(f"❌ Mission Failed: {str(e)}")
-
-# --- 6. OUTPUT, DIAGRAM & DOWNLOAD ---
-import re # Add this import at the top of your file if not present, or just use it here locally
-
+# --- 6. OUTPUT & DOWNLOAD ---
 if st.session_state.analysis_result:
     st.markdown("---")
     st.markdown(st.session_state.analysis_result)
     
-    # --- DIAGRAM RENDERER (The "Kill Shot") ---
-    # We look for the ```dot pattern and extract the code
+    # --- DIAGRAM RENDERER ---
+    # Looks for ```dot code blocks and renders them
     diagram_match = re.search(r'```dot\n(.*?)\n```', st.session_state.analysis_result, re.DOTALL)
-    
     if diagram_match:
         st.subheader("🏗️ Architecture Diagram")
         try:
-            # Native Streamlit Graphviz support
             st.graphviz_chart(diagram_match.group(1))
             st.caption("Visualized by ArchiTek Engine")
         except Exception as e:
-            st.warning("Diagram could not be rendered automatically (Syntax Error).")
-    
-    # --- DOWNLOAD BUTTON ---
+            st.warning("Diagram could not be rendered automatically.")
+
     st.download_button(
         label="📥 Download Intel Report",
         data=st.session_state.analysis_result.encode('utf-8'),
