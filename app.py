@@ -126,6 +126,11 @@ def get_persona_prompt(role, industry, text):
         ## 3. Implementation Roadmap
         * **Phase 1 (POC):** Success metrics.
         * **Phase 2 (Scale):** Infrastructure requirements.
+
+        ## 4. Architecture Diagram (Graphviz)
+        * Create a VALID Graphviz DOT code block representing the system architecture.
+        * Wrap it in ```dot ... ``` tags.
+        * Use rectangular nodes for components and labeled edges for data flow.
         """
 
     elif role == "Strategy Consultant":
@@ -167,6 +172,11 @@ def get_persona_prompt(role, industry, text):
         
         ## 3. MVP Spec
         * **Minimal Feature Set:** The smallest version of this code that works.
+
+        ## 4. System Flow (Graphviz)
+        * Create a VALID Graphviz DOT code block showing the data pipeline.
+        * Wrap it in ```dot ... ``` tags.
+        * Keep it simple: Input -> Process -> Output.
         """
     return base_prompt
 
@@ -201,11 +211,27 @@ if uploaded_file and st.button("Execute Analysis"):
         except Exception as e:
             st.error(f"❌ Mission Failed: {str(e)}")
 
-# --- 6. OUTPUT & DOWNLOAD ---
+# --- 6. OUTPUT, DIAGRAM & DOWNLOAD ---
+import re # Add this import at the top of your file if not present, or just use it here locally
+
 if st.session_state.analysis_result:
     st.markdown("---")
     st.markdown(st.session_state.analysis_result)
     
+    # --- DIAGRAM RENDERER (The "Kill Shot") ---
+    # We look for the ```dot pattern and extract the code
+    diagram_match = re.search(r'```dot\n(.*?)\n```', st.session_state.analysis_result, re.DOTALL)
+    
+    if diagram_match:
+        st.subheader("🏗️ Architecture Diagram")
+        try:
+            # Native Streamlit Graphviz support
+            st.graphviz_chart(diagram_match.group(1))
+            st.caption("Visualized by ArchiTek Engine")
+        except Exception as e:
+            st.warning("Diagram could not be rendered automatically (Syntax Error).")
+    
+    # --- DOWNLOAD BUTTON ---
     st.download_button(
         label="📥 Download Intel Report",
         data=st.session_state.analysis_result.encode('utf-8'),
