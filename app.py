@@ -4,210 +4,211 @@ import google.generativeai as genai
 from PyPDF2 import PdfReader
 
 # --- 1. CONFIGURATION ---
-st.set_page_config(page_title="ArchiTek | Blueprint Engine", page_icon="🏛️", layout="wide")
+st.set_page_config(page_title="ArchiTek | Intel Engine", page_icon="🏛️", layout="wide")
 
-# Custom CSS for a professional "Dark Mode" look
+# Black Ops Style CSS
 st.markdown("""
 <style>
-    /* 1. HIDE STREAMLIT BRANDING */
-    #MainMenu {visibility: hidden;} /* Hides the Hamburger Menu */
-    footer {visibility: hidden;}    /* Hides 'Made with Streamlit' */
-    header {visibility: hidden;}    /* Hides the top colored bar */
-    
-    /* 2. HIDE THE 'MANAGE APP' BUTTON (The GitHub Link) */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
     [data-testid="stToolbar"] {visibility: hidden !important;} 
     
-    /* 3. PROFESSIONAL DARK THEME */
-    .stApp {background-color: #0E1117; color: #FAFAFA;}
+    .stApp {background-color: #0E1117; color: #E6E6E6;}
     
-    /* 4. CUSTOM BUTTON STYLING */
-    /* Green Download Button */
-    .stDownloadButton > button {
-        background-color: #00FF00 !important;
-        color: #000000 !important;
-        font-weight: bold !important;
-        border: none !important;
+    /* Input Fields */
+    .stTextInput > div > div > input {
+        background-color: #161B22; 
+        color: #FAFAFA; 
+        border: 1px solid #30363D;
     }
     
-    /* Purple Validation Button */
+    /* Green Action Button */
     .stButton > button {
-        background-color: #7B2CBF !important;
-        color: white !important; 
-        font-weight: bold !important;
-        border: 1px solid #9D4EDD !important;
+        background-color: #238636 !important;
+        color: white !important;
+        border: none !important;
+        font-weight: bold;
     }
     
-    /* 5. REMOVE TOP PADDING (Since we hid the header) */
-    .block-container {
-        padding-top: 2rem !important; 
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: #0d1117;
+        border-right: 1px solid #30363D;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 2. SESSION STATE (The Memory) ---
-if "blueprint_result" not in st.session_state:
-    st.session_state.blueprint_result = None
-# ... (rest of your code remains the same
+# --- 2. SESSION STATE ---
+if "analysis_result" not in st.session_state:
+    st.session_state.analysis_result = None
 
-# --- 2. SMART AUTH SYSTEM ---
-# Try to load the "Sponsor Key" from Streamlit Secrets
+# --- 3. AUTH & SETUP ---
 try:
     sponsor_key = st.secrets["GOOGLE_API_KEY"]
-except (FileNotFoundError, KeyError):
+except:
     sponsor_key = None
 
 active_key = None
 
 with st.sidebar:
-    st.title("🏛️ ArchiTek")
-    st.markdown("**Whitepaper to Wallet.**")
+    st.title("🏛️ ArchiTek // V3")
+    st.caption("Adaptive Intelligence Engine")
     st.markdown("---")
     
-    # Logic: If sponsor key exists, use it by default to reduce friction
-    if sponsor_key:
-        st.success("✅ **Free Access Active**")
-        st.caption("Sponsored by BehindTheBlackBox")
-        
-        # Default to sponsor key
-        active_key = sponsor_key
-        
-        # Optional Override for Power Users (or if Sponsor Key hits limit)
-        with st.expander("🔑 Use Your Own Key (Optional)"):
-            user_key = st.text_input("Enter Gemini API Key", type="password")
-            if user_key:
-                active_key = user_key
-                st.info("Using your personal key.")
-    else:
-        # Fallback if you haven't set secrets yet
-        st.warning("⚠️ Free Quota Paused.")
-        active_key = st.text_input("Enter Gemini API Key", type="password")
-
+    # --- MISSION BRIEF (The "Black Ops" Inputs) ---
+    st.subheader("🎯 Mission Brief")
+    
+    user_persona = st.selectbox(
+        "Your Role",
+        ("Startup Founder", "Enterprise CTO", "Strategy Consultant", "Lead Engineer"),
+        help="The AI will adapt its analysis to match your expertise."
+    )
+    
+    target_industry = st.text_input(
+        "Target Sector", 
+        value="General",
+        placeholder="e.g., Fintech, BioTech, Legal..."
+    )
+    
     st.markdown("---")
+    
+    if sponsor_key:
+        st.success("✅ **System Online**")
+        active_key = sponsor_key
+        with st.expander("Override Access Key"):
+            active_key = st.text_input("API Key", type="password") or sponsor_key
+    else:
+        st.warning("⚠️ Manual Auth Required")
+        active_key = st.text_input("Enter API Key", type="password")
 
-# --- 3. MODEL SETUP & VALIDATION ---
-model = None
-models_ready = False
+# --- 4. PROMPT LOGIC (The Brains) ---
+def get_persona_prompt(role, industry, text):
+    base_prompt = f"Analyze this research paper. Context: {text[:100000]}."
+    
+    if role == "Startup Founder":
+        return f"""
+        {base_prompt}
+        ACT AS: A ruthless VC & Product Architect.
+        GOAL: Extract a money-making SaaS idea for the {industry} sector.
+        
+        OUTPUT FORMAT:
+        ## 1. The Opportunity (Money)
+        * **The Pain Point:** What expensive problem does this solve?
+        * **The Solution:** A micro-SaaS concept for {industry}.
+        * **Unfair Advantage:** Why this tech beats standard GPT-4 wrappers.
+        
+        ## 2. The Mechanics (Logic)
+        * **Secret Sauce:** The one logic/equation that matters (Explain simply).
+        * **Executive Pseudo-Code:** IF/THEN logic of the core algorithm.
+        
+        ## 3. Go-To-Market
+        * **First 10 Customers:** Exactly who to email.
+        * **Pricing Model:** How to charge (Sub vs Usage).
+        """
+        
+    elif role == "Enterprise CTO":
+        return f"""
+        {base_prompt}
+        ACT AS: A Senior Principal Architect at a Fortune 500 company.
+        GOAL: Assess technical feasibility and risk for {industry} adoption.
+        
+        OUTPUT FORMAT:
+        ## 1. Executive Summary
+        * **Strategic Value:** Does this move the needle for {industry}?
+        * **Build vs. Buy:** Should we build this internally or wait for a vendor?
+        
+        ## 2. Technical Architecture
+        * **Core Components:** Required infrastructure (Vector DBs, GPU specs).
+        * **Latency & Cost Analysis:** Is this computationally expensive?
+        * **Integration Risks:** Security/Compliance red flags for {industry}.
+        
+        ## 3. Implementation Roadmap
+        * **Phase 1 (POC):** Success metrics.
+        * **Phase 2 (Scale):** Infrastructure requirements.
+        """
 
+    elif role == "Strategy Consultant":
+        return f"""
+        {base_prompt}
+        ACT AS: A Partner at McKinsey/Deloitte.
+        GOAL: Create a briefing for a C-Level client in {industry}.
+        
+        OUTPUT FORMAT:
+        ## 1. The "So What?"
+        * **Market Impact:** How this disrupts the current {industry} value chain.
+        * **Competitive Threat:** What happens if competitors adopt this first?
+        
+        ## 2. Strategic Use Cases
+        * **Efficiency Play:** How to cut costs.
+        * **Innovation Play:** New revenue streams enabled by this research.
+        
+        ## 3. The Pitch (Slide Content)
+        * **Slide 1 Headline:** The "Hook".
+        * **Key Statistic/Insight:** The strongest data point from the paper.
+        * **Recommendation:** Immediate next steps.
+        """
+
+    elif role == "Lead Engineer":
+        return f"""
+        {base_prompt}
+        ACT AS: A Staff Engineer / Hacker.
+        GOAL: How do I build this this weekend?
+        
+        OUTPUT FORMAT:
+        ## 1. The Hack
+        * **Core Logic:** The breakdown of the algorithm (No math jargon).
+        * **The "Trick":** What makes this work? (e.g., specific prompting, graph traversal).
+        
+        ## 2. Implementation Guide
+        * **Stack Recommendation:** Python + [Libraries].
+        * **Pseudo-Code:** Clean, readable logic flow.
+        * **Gotchas:** What will break? (e.g., Context window limits, hallucinations).
+        
+        ## 3. MVP Spec
+        * **Minimal Feature Set:** The smallest version of this code that works.
+        """
+    return base_prompt
+
+# --- 5. EXECUTION ---
 if active_key:
     genai.configure(api_key=active_key)
     
+    # Model Init
     try:
-        # Check models to ensure key is valid
-        available_models = []
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                available_models.append(m.name)
-        
-        if available_models:
-            # Smart Selection: Prioritize Flash (Fast/Cheap) -> Pro (Smart)
-            model_to_use = None
-            preferred_models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro']
+        model = genai.GenerativeModel('gemini-1.5-flash')
+    except:
+        st.error("⚠️ System Offline. Check API Key.")
+        st.stop()
+
+st.title("ArchiTek // Intel Engine")
+st.markdown(f"**Mission:** Analyze Research for **{user_persona}** in **{target_industry}**.")
+
+uploaded_file = st.file_uploader("Upload Target Dossier (PDF)", type=["pdf"])
+
+if uploaded_file and st.button("Execute Analysis"):
+    with st.spinner("Extracting Intel..."):
+        try:
+            pdf = PdfReader(uploaded_file)
+            text = "".join([p.extract_text() for p in pdf.pages])
             
-            for preferred in preferred_models:
-                for available in available_models:
-                    if preferred in available:
-                        model_to_use = available.split('/')[-1]
-                        break
-                if model_to_use: break
+            # Dynamic Prompting
+            final_prompt = get_persona_prompt(user_persona, target_industry, text)
             
-            # Fallback
-            if not model_to_use:
-                model_to_use = available_models[0].split('/')[-1]
-
-            model = genai.GenerativeModel(model_to_use)
-            models_ready = True
-            st.sidebar.info(f"🤖 Brain: **{model_to_use}**")
-        else:
-            st.sidebar.error("❌ Key valid, but no models found.")
+            response = model.generate_content(final_prompt)
+            st.session_state.analysis_result = response.text
             
-    except Exception as e:
-        # Immediate check for Auth/Quota errors on startup
-        if "429" in str(e) or "403" in str(e) or "ResourceExhausted" in str(e):
-            st.sidebar.error("⚠️ **Sponsor Quota Exceeded.**")
-            st.sidebar.warning("Please enter your own API Key in the expander above.")
-            models_ready = False
-        else:
-            st.sidebar.error(f"❌ Key Error: {str(e)}")
-            models_ready = False
-else:
-    st.info("👈 Waiting for credentials...")
+        except Exception as e:
+            st.error(f"❌ Mission Failed: {str(e)}")
 
-# --- 4. MAIN INTERFACE ---
-st.header("Build Your AI SaaS Blueprint")
-st.markdown("Upload a research paper to generate the **Implementation Blueprint**.")
-
-uploaded_file = st.file_uploader("Upload ArXiv PDF", type=["pdf"])
-
-if uploaded_file and models_ready:
-    if st.button("Generate Blueprint 🚀"):
-        with st.spinner("Analyzing Architecture... (This takes 10-20s)"):
-            try:
-                # 1. READ PDF
-                pdf_reader = PdfReader(uploaded_file)
-                text = ""
-                for page in pdf_reader.pages:
-                    text += page.extract_text()
-                
-                # Truncate text to avoid token limits (100k chars is plenty for Flash)
-                text = text[:100000]
-                
-                # 2. THE ARCHITECT PROMPT
-                prompt = f"""
-                You are a Senior AI Solutions Architect. Analyze this research paper for a Solopreneur who wants to build a SaaS.
-
-                RESEARCH PAPER TEXT:
-                {text}
-
-                OUTPUT FORMAT (Strictly follow this structure):
-
-                ## 1. Core Mechanism (The Code Logic)
-                * **Key Concept:** One sentence explaining the breakthrough.
-                * **Critical Equation:** Extract the most important formula (in LaTeX).
-                * **Plain English:** Explain what that formula DOES.
-                * **Pseudo-Code:** Write a Python function (def) representing this core logic.
-
-                ## 2. Product-Market Translation (The Money)
-                * **The "Unfair Advantage":** What does this tech do better/cheaper than current tools?
-                * **Under-Tapped Niche:** Identify ONE specific, boring, high-margin industry (e.g., Legal, Oil, Medical) that needs this.
-                * **SaaS Idea:** Name and describe a micro-SaaS product for that niche.
-
-                ## 3. The MVP Checklist (The 7-Day Plan)
-                * List 5 steps to build a Minimum Viable Product using existing APIs (Gemini/OpenAI) + LangChain.
-                * Identify the "Small Scale" parameters (e.g., "Don't train, use RAG with top_k=5").
-                """
-                
-                # 3. GENERATE CONTENT
-                response = model.generate_content(prompt)
-                
-                # 4. DISPLAY RESULTS
-                st.markdown("---")
-                st.markdown(response.text)
-                st.balloons()
-                st.success("✅ Blueprint Generated. Start building.")
-                
-                # 5. SMART DOWNLOAD BUTTON (Tangible Asset)
-                st.download_button(
-                    label="📥 Download Blueprint (.txt)",
-                    data=response.text,
-                    file_name="ArchiTek_Blueprint.txt",
-                    mime="text/plain"
-                )
-                
-            except Exception as e:
-                err_str = str(e)
-                
-                # SMART ERROR HANDLING
-                if "429" in err_str or "ResourceExhausted" in err_str:
-                    st.error("⚠️ **Sponsor Quota Exceeded.**")
-                    st.warning("The free shared key is currently overloaded. Please open the sidebar '🔑 Use Your Own Key' and enter your free key from Google AI Studio.")
-                    st.stop()
-                
-                elif "ValueError" in err_str and "feedback" in err_str.lower():
-                    st.error("🛡️ **Content Filter Triggered.**")
-                    st.warning("Gemini refused to process this PDF due to safety settings. Try a different paper.")
-                    st.stop()
-                
-                else:
-                    st.error(f"❌ Analysis Failed. Error details:")
-                    st.code(err_str)
-
+# --- 6. OUTPUT & DOWNLOAD ---
+if st.session_state.analysis_result:
+    st.markdown("---")
+    st.markdown(st.session_state.analysis_result)
+    
+    st.download_button(
+        label="📥 Download Intel Report",
+        data=st.session_state.analysis_result.encode('utf-8'),
+        file_name=f"ArchiTek_{user_persona.replace(' ', '_')}_Report.md",
+        mime="text/markdown"
+    )
