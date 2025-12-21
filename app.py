@@ -1,20 +1,3 @@
-Here is the **Complete, "Creator-Ready" `app.py**`.
-
-It includes everything we discussed:
-
-* **🎄 Christmas Icon**: Set in the page config.
-* **🕵️‍♂️ Stealth Mode (Updated)**: Aggressively hides the "Manage App" button and Streamlit badges.
-* **🎥 Creator Persona**: New mode to generate scripts for **DesiAILabs** and **LinkedIn**.
-* **🎓 Ecosystem Upsell**: The sidebar card linking to your **AI Gurukul**.
-* **🤖 Agent Handoff**: The `.cursorrules` generator for engineers.
-
-### 📋 Instructions
-
-1. **Copy** the code below.
-2. **Paste** it into your `app.py` (overwrite everything).
-3. **Commit** to GitHub.
-
-```python
 import os
 import re
 import streamlit as st
@@ -128,7 +111,7 @@ with st.sidebar:
         st.warning("⚠️ Manual Auth Required")
         active_key = st.text_input("Enter API Key", type="password")
 
-    # --- ECOSYSTEM UPSELL (Step 3 Integration) ---
+    # --- ECOSYSTEM UPSELL ---
     st.markdown("---")
     st.caption("🚀 Built by [DesiAILabs](https://www.youtube.com/@DesiAILabs)")
     
@@ -265,7 +248,7 @@ if active_key:
                 pdf = PdfReader(uploaded_file)
                 text = "".join([p.extract_text() for p in pdf.pages])
                 
-                # 2. SMART MODEL SELECTOR (Resolves 404 Error)
+                # 2. SMART MODEL SELECTOR
                 available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
                 
                 if not available_models:
@@ -312,5 +295,3 @@ if st.session_state.analysis_result:
         file_name=f"ArchiTek_{user_persona.replace(' ', '_')}_Report.md",
         mime="text/markdown"
     )
-
-```
