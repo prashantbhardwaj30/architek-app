@@ -5,26 +5,39 @@ import google.generativeai as genai
 from PyPDF2 import PdfReader
 
 # --- 1. CONFIGURATION ---
-st.set_page_config(page_title="ArchiTek | Intel Engine", page_icon="🏛️", layout="wide")
+st.set_page_config(page_title="ArchiTek | Intel Engine", page_icon="🎁", layout="wide")
 
-# Black Ops Style CSS
+# Black Ops Style CSS (Updated for Mobile & Desktop Stealth)
 st.markdown("""
 <style>
+    /* 1. HIDE ALL STREAMLIT BRANDING ELEMENTS */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-    [data-testid="stToolbar"] {visibility: hidden !important;} 
     
+    /* 2. NUCLEAR OPTION FOR THE TOOLBAR (GitHub/Manage App) */
+    [data-testid="stToolbar"] {
+        visibility: hidden !important;
+        display: none !important;
+    }
+    
+    /* 3. HIDE THE COLORED LINE AT THE TOP */
+    [data-testid="stDecoration"] {
+        visibility: hidden !important;
+        display: none !important;
+    }
+
+    /* 4. BLACK OPS THEME */
     .stApp {background-color: #0E1117; color: #E6E6E6;}
     
-    /* Input Fields */
+    /* 5. INPUT FIELDS (Dark Mode) */
     .stTextInput > div > div > input {
         background-color: #161B22; 
         color: #FAFAFA; 
         border: 1px solid #30363D;
     }
     
-    /* Green Action Button */
+    /* 6. GREEN ACTION BUTTON */
     .stButton > button {
         background-color: #238636 !important;
         color: white !important;
@@ -32,10 +45,15 @@ st.markdown("""
         font-weight: bold;
     }
     
-    /* Sidebar Styling */
+    /* 7. SIDEBAR STYLING */
     [data-testid="stSidebar"] {
         background-color: #0d1117;
         border-right: 1px solid #30363D;
+    }
+    
+    /* 8. REMOVE TOP PADDING (Fixes the gap left by the hidden header) */
+    .block-container {
+        padding-top: 1rem !important; 
     }
 </style>
 """, unsafe_allow_html=True)
@@ -248,3 +266,4 @@ if st.session_state.analysis_result:
         file_name=f"ArchiTek_{user_persona.replace(' ', '_')}_Report.md",
         mime="text/markdown"
     )
+
