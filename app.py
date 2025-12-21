@@ -127,109 +127,67 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. PROMPT LOGIC ---
+# --- 4. PROMPT LOGIC: THE V5 BOARDROOM ---
 def get_persona_prompt(role, industry, text):
-    base_prompt = f"Analyze this research paper. Context: {text[:100000]}."
+    base_prompt = f"Analyze this research paper for the {industry} sector. Context: {text[:100000]}."
     
     if role == "Startup Founder":
         return f"""
         {base_prompt}
-        ACT AS: A ruthless VC & Product Architect.
-        GOAL: Extract a money-making SaaS idea for the {industry} sector.
+        ACT AS: A Board consisting of Jeff Bezos and Sam Altman.
         
-        OUTPUT FORMAT:
-        ## 1. The Opportunity (Money)
-        * **The Pain Point:** What expensive problem does this solve?
-        * **The Solution:** A micro-SaaS concept for {industry}.
-        * **Unfair Advantage:** Why this tech beats standard GPT-4 wrappers.
-        
-        ## 2. The Mechanics (Logic)
-        * **Secret Sauce:** The one logic/equation that matters (Explain simply).
-        * **Executive Pseudo-Code:** IF/THEN logic of the core algorithm.
-        
-        ## 3. Go-To-Market
-        * **First 10 Customers:** Exactly who to email.
-        * **Pricing Model:** How to charge (Sub vs Usage).
+        ## 1. The Opportunity (Altman's Wedge)
+        * **The Wedge:** What is the smallest, most aggressive entry point into {industry}?
+        * **Viral Coefficient:** How does this product grow naturally?
+        * **The SaaS Concept:** A specific micro-SaaS title and value prop.
+
+        ## 2. The Bezos Friction Scorecard
+        * **Decision Type:** Is this a 'One-Way Door' (Complex/Hard to pivot) or 'Two-Way Door' (Easy to test)?
+        * **Two-Pizza Team Requirement:** How many people are needed to build the MVP?
+        * **Frugality Check:** What is the cheapest way to prove this works today?
+
+        ## 3. Market Validation (Smoke Test)
+        * **The "Zero-Dollar" Test:** Exactly how to validate demand without writing code.
+        * **Target Metric:** What specific number (signups/clicks) proves this is a business?
         """
         
     elif role == "Enterprise CTO":
         return f"""
         {base_prompt}
-        ACT AS: A Senior Principal Architect at a Fortune 500 company.
-        GOAL: Assess technical feasibility and risk for {industry} adoption.
+        ACT AS: A Senior Principal Architect and Jeff Bezos.
         
-        OUTPUT FORMAT:
-        ## 1. Executive Summary
-        * **Strategic Value:** Does this move the needle for {industry}?
-        * **Build vs. Buy:** Should we build this internally or wait for a vendor?
-        
-        ## 2. Technical Architecture
-        * **Core Components:** Required infrastructure (Vector DBs, GPU specs).
-        * **Latency & Cost Analysis:** Is this computationally expensive?
-        * **Integration Risks:** Security/Compliance red flags for {industry}.
-        
-        ## 3. Implementation Roadmap
-        * **Phase 1 (POC):** Success metrics.
-        * **Phase 2 (Scale):** Infrastructure requirements.
+        ## 1. Executive Risk Audit
+        * **Implementation Friction:** On a scale of 1-10, how hard is this to integrate?
+        * **Legacy Compatibility:** How does this disrupt existing {industry} stacks?
+        * **One-Way Doors:** Identify the irreversible technical decisions in this paper.
 
-        ## 4. Architecture Diagram (Graphviz)
-        * Create a VALID Graphviz DOT code block representing the system architecture.
-        * Wrap it in ```dot ... ``` tags.
-        * Use rectangular nodes for components and labeled edges for data flow.
+        ## 2. Technical Architecture (Karpathy Style)
+        * **The "Autonomy Slider":** How much of this can be handled by AI Agents vs. Human code?
+        * **Architecture Diagram (Graphviz):** ```dot
+        graph TD
+        A[Input Data] --> B[Paper Logic]
+        B --> C[API Layer]
+        C --> D[User Value]
+        ```
         """
 
     elif role == "Lead Engineer":
         return f"""
         {base_prompt}
-        ACT AS: A Staff Engineer & AI Agent Architect.
-        GOAL: Create the "Spec File" to feed into an AI Code Editor (Cursor/Windsurf).
+        ACT AS: Andrej Karpathy (Software 3.0 approach).
         
-        OUTPUT FORMAT:
-        ## 1. The Hack
-        * **Core Logic:** The breakdown of the algorithm (No math jargon).
-        * **The "Trick":** What makes this work? (e.g., specific prompting, graph traversal).
+        ## 1. The Logic Breakdown
+        * **Neural Architecture:** How would a machine describe this logic?
+        * **System Flow (Graphviz):** Provide a DOT code block showing the data pipeline.
         
-        ## 2. Implementation Guide
-        * **Stack Recommendation:** Python + [Libraries].
-        * **Gotchas:** What will break? (e.g., Context window limits, hallucinations).
+        ## 2. The Agent Protocol (.cursorrules)
+        * Create a system-level instruction for an AI Agent (Cursor/Windsurf).
+        * Define the "Source of Truth" from the paper.
+        * Structure: Folder hierarchy, tech stack, and safety constraints.
         
-        ## 3. System Flow (Graphviz)
-        * Create a VALID Graphviz DOT code block showing the data pipeline.
-        * Wrap it in ```dot ... ``` tags.
-        
-        ## 4. The Agent Protocol (.cursorrules)
-        * Write a comprehensive system prompt that I can paste into a `.cursorrules` file.
-        * **Context:** Tell the AI Agent exactly what this project is.
-        * **File Structure:** Define the folder structure (app.py, requirements.txt, /src).
-        * **Coding Standards:** "Use Python 3.9+, Type Hinting, no spaghetti code."
-        * **Goal:** "Build the MVP described in the Analysis above."
+        ## 3. The Execution Hack
+        * The 'Weekend Build' path: Which APIs to use to simulate the paper's results.
         """
-
-    elif role == "Content Creator (YouTube/LinkedIn)":
-        return f"""
-        {base_prompt}
-        ACT AS: A Viral Tech Influencer & Educator (like 'DesiAILabs').
-        GOAL: Turn this complex research paper into engaging content for a mass audience.
-        
-        OUTPUT FORMAT:
-        ## 1. The YouTube Short (60s Script)
-        * **Hook (0-5s):** A shocking fact/statement from the paper.
-        * **The "What" (5-30s):** Explain the core breakthrough in simple Hindi/English (Hinglish).
-        * **The "Wow" (30-50s):** Show a specific capability or result.
-        * **CTA (50-60s):** "Check the link in bio for the full blueprint."
-        
-        ## 2. The LinkedIn Carousel (5 Slides)
-        * **Slide 1:** The "Clickbait" Title (e.g., "RAG is Dead?").
-        * **Slide 2:** The Problem (The "Before").
-        * **Slide 3:** The Solution (The Paper's Logic).
-        * **Slide 4:** The Architecture Diagram (Describe it).
-        * **Slide 5:** "Steal this Workflow" (Link to ArchiTek).
-        
-        ## 3. The "OneUsefulThing" Insight (Blog)
-        * **The Big Shift:** How this changes the AI landscape in 2026.
-        * **Analogy:** Explain the tech using a real-world analogy (e.g., "Like a Librarian with a photographic memory").
-        """
-        
     return base_prompt
 
 # --- 5. EXECUTION ---
@@ -295,3 +253,4 @@ if st.session_state.analysis_result:
         file_name=f"ArchiTek_{user_persona.replace(' ', '_')}_Report.md",
         mime="text/markdown"
     )
+
