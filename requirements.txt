@@ -1,3 +1,5 @@
 streamlit
 google-generativeai
 PyPDF2
+requests
+plotly
