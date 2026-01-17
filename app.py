@@ -936,13 +936,13 @@ with st.sidebar:
     # Founder links
     st.subheader("🔗 Connect")
     st.markdown("""
-    <a class="brand-btn btn-linkedin" href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank">
-        LinkedIn — Prashant Bhardwaj
+    <a class="brand-btn btn-linkedin" href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank" rel="noopener">
+        🔗 LinkedIn — Prashant Bhardwaj
     </a>
-    <a class="brand-btn btn-youtube" href="https://www.youtube.com/@DesiAILabs" target="_blank">
-        YouTube — Desi AI Labs
+    <a class="brand-btn btn-youtube" href="https://www.youtube.com/@DesiAILabs" target="_blank" rel="noopener">
+        🎬 YouTube — Desi AI Labs
     </a>
-    <a class="brand-btn btn-gurukul" href="https://aigurukul.lovable.app" target="_blank">
+    <a class="brand-btn btn-gurukul" href="https://aigurukul.lovable.app" target="_blank" rel="noopener">
         🎓 AI Gurukul Training
     </a>
     """, unsafe_allow_html=True)
@@ -1185,9 +1185,9 @@ if generate_clicked and api_key:
             'borderwidth': 2,
             'bordercolor': '#30363d',
             'steps': [
-                {'range': [0, 40], 'color': '#f8514922'},
-                {'range': [40, 70], 'color': '#d2992222'},
-                {'range': [70, 100], 'color': '#3fb95022'}
+                {'range': [0, 40], 'color': 'rgba(248, 81, 73, 0.15)'},
+                {'range': [40, 70], 'color': 'rgba(210, 153, 34, 0.15)'},
+                {'range': [70, 100], 'color': 'rgba(63, 185, 80, 0.15)'}
             ],
             'threshold': {
                 'line': {'color': '#ffffff', 'width': 4},
