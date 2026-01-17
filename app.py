@@ -6,142 +6,145 @@ import google.generativeai as genai
 from PyPDF2 import PdfReader
 from io import BytesIO
 
-# --- 1. CONFIGURATION & ULTIMATE STEALTH CSS ---
+# --- 1. CONFIGURATION ---
 st.set_page_config(page_title="ArchiTek | Market Intel", page_icon="🎄", layout="wide")
 
+# --- 2. THE ULTIMATE VISIBILITY CSS ---
 st.markdown("""
 <style>
-    /* 1. HIDE ALL STREAMLIT BRANDING GHOSTS */
-    header {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    
-    /* 2. SPECIFICALLY TARGET THE MANAGE APP & GITHUB BUTTONS */
-    .stAppDeployButton {display: none !important;}
-    [data-testid="stStatusWidget"] {display: none !important;}
-    [data-testid="stToolbar"] {display: none !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    
-    /* 3. ENSURE SIDEBAR IS VISIBLE BUT CLEAN */
-    [data-testid="stSidebar"] {
-        background-color: #0d1117;
-        border-right: 1px solid #30363D;
-        visibility: visible !important;
+    /* 1. Nuke Default Branding */
+    header, footer, .stAppDeployButton, [data-testid="stStatusWidget"], [data-testid="stToolbar"], [data-testid="stDecoration"] {
+        visibility: hidden !important; display: none !important;
     }
     
-    /* 4. BLACK OPS THEME REFINEMENT */
+    /* 2. FORCE SIDEBAR VISIBILITY */
+    section[data-testid="stSidebar"] {
+        background-color: #0d1117 !important;
+        border-right: 1px solid #30363D !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+    
+    /* 3. THEME & COLORS */
     .stApp {background-color: #0E1117; color: #E6E6E6;}
     .stTextInput > div > div > input { background-color: #161B22; color: #FAFAFA; border: 1px solid #30363D; }
     
-    /* 5. BUTTON STYLING */
-    .stButton > button { 
+    /* 4. SIDEBAR BUTTONS */
+    .stSidebar .stButton > button { 
         background-color: #238636 !important; 
         color: white !important; 
         font-weight: bold; 
         border: none !important; 
+        width: 100% !important;
+        padding: 10px !important;
+        margin-top: 10px;
+    }
+
+    /* 5. MAIN EXECUTE BUTTON */
+    div.stButton > button:first-child {
+        background-color: #238636 !important;
+        color: white !important;
+        height: 3em;
         width: 100%;
+        font-weight: bold;
     }
     
-    /* 6. FIX TOP PADDING */
-    .block-container { padding-top: 1rem !important; }
+    .block-container { padding-top: 1.5rem !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 2. SESSION STATE ---
-if "analysis_result" not in st.session_state:
-    st.session_state.analysis_result = None
-
-# --- 3. THE BRANDED SIDEBAR (THE MISSION BRIEF) ---
+# --- 3. BRANDED SIDEBAR ---
 try:
     sponsor_key = st.secrets["GOOGLE_API_KEY"]
 except:
     sponsor_key = None
 
 with st.sidebar:
-    st.title("🏛️ ArchiTek // V6")
+    st.title("🏛️ ArchiTek // V7")
     st.caption("Strategic Intelligence Engine")
     st.markdown("---")
     
     st.subheader("🎯 Mission Brief")
-    user_persona = st.selectbox(
+    user_role = st.selectbox(
         "Your Role",
         ("Venture Capital Partner", "Chief Technology Officer", "Staff Software Engineer", "Brand & Content Lead")
     )
-    target_industry = st.text_input("Target Sector", value="General")
+    industry = st.text_input("Target Sector", value="General")
     
     st.markdown("---")
-    active_key = sponsor_key or st.text_input("Enter API Key", type="password")
+    auth_key = sponsor_key or st.text_input("Enter API Key", type="password")
 
-    # --- SOCIAL INTEGRATION ---
+    # --- PERSONAL BRAND ASSETS ---
     st.subheader("🔗 Connect")
-    st.markdown(f"""
-        <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank"><button style="width: 100%; background-color: #0077B5; color: white; border: none; padding: 10px; border-radius: 5px; margin-bottom: 8px; font-weight: bold; cursor: pointer;">LinkedIn Profile</button></a>
-        <a href="https://www.youtube.com/@DesiAILabs" target="_blank"><button style="width: 100%; background-color: #FF0000; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer;">YouTube Channel</button></a>
+    st.markdown("""
+        <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank">
+            <button style="width: 100%; background-color: #0077B5; color: white; border: none; padding: 12px; border-radius: 5px; margin-bottom: 10px; font-weight: bold; cursor: pointer;">LinkedIn Profile</button>
+        </a>
+        <a href="https://www.youtube.com/@DesiAILabs" target="_blank">
+            <button style="width: 100%; background-color: #FF0000; color: white; border: none; padding: 12px; border-radius: 5px; margin-bottom: 10px; font-weight: bold; cursor: pointer;">YouTube: Desi AI Labs</button>
+        </a>
     """, unsafe_allow_html=True)
 
-    # --- FUNNEL INTEGRATION ---
     st.markdown("""
-    <div style="background-color: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d; margin-top: 10px;">
-        <h4 style="margin: 0; color: #FAFAFA; font-size: 14px;">🎓 Master AI Build</h4>
-        <a href="https://aigurukul.lovable.app" target="_blank" style="text-decoration: none;">
-            <button style="width: 100%; background-color: #238636; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top:10px;">Join AI Gurukul</button>
+    <div style="background-color: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d;">
+        <h4 style="margin: 0; color: #FAFAFA; font-size: 14px;">🎓 AI Gurukul</h4>
+        <p style="font-size: 11px; color: #8b949e; margin: 5px 0 10px 0;">Build AI Agents with Prashant Bhardwaj.</p>
+        <a href="https://aigurukul.lovable.app" target="_blank">
+            <button style="width: 100%; background-color: #238636; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer;">Join Training</button>
         </a>
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. STRATEGIC PROMPT LOGIC ---
-def get_persona_prompt(role, industry, text):
-    base = f"Analyze this research for the {industry} sector in 2026. Context: {text[:80000]}."
+# --- 4. ENGINE LOGIC ---
+def get_strategic_prompt(role, ind, txt):
+    # Optimized for CRISP and CLEAR output
+    base = f"Analyze this research for {ind}. Be extremely concise. Use tables and bullet points only."
+    
     if role == "Venture Capital Partner":
-        return f"{base} 1. Market Heatmap (Hotness vs Saturation), 2. The Wedge, 3. Decision Door Table, 4. ROI Forecast."
+        return f"{base} Context: {txt[:80000]}. Provide: 1. Market Heatmap, 2. Decision Door Table (Reversible vs Not), 3. ROI Wedge."
     elif role == "Chief Technology Officer":
-        return f"{base} 1. Friction Score, 2. Technical Moat, 3. System Architecture Diagram (Graphviz DOT code in ```dot tags)."
+        return f"{base} Context: {txt[:80000]}. Provide: 1. Friction Score (1-10), 2. Implementation Risks, 3. Architecture (Graphviz DOT in ```dot tags)."
     elif role == "Staff Software Engineer":
-        return f"{base} 1. Shortest MVP Path, 2. Full .cursorrules instructions, 3. Data Pipeline Diagram (Graphviz DOT code in ```dot tags)."
+        return f"{base} Context: {txt[:80000]}. Provide: 1. MVP Path, 2. .cursorrules code block, 3. Flow Diagram (Graphviz DOT in ```dot tags)."
     elif role == "Brand & Content Lead":
-        return f"{base} 1. ROI Value Hook, 2. LinkedIn/YouTube Script, 3. Counter-Intuitive Insight."
+        return f"{base} Context: {txt[:80000]}. Provide: 1. The ROI Hook, 2. LinkedIn Post Draft, 3. YouTube Short Script."
     return base
 
-def download_arxiv_pdf(url):
-    arxiv_id_match = re.search(r'(\d{4}\.\d{4,5})', url)
-    if not arxiv_id_match: return None
-    response = requests.get(f"https://arxiv.org/pdf/{arxiv_id_match.group(1)}.pdf", timeout=30)
-    return BytesIO(response.content) if response.status_code == 200 else None
-
-# --- 5. MAIN INTERFACE ---
+# --- 5. INTERFACE & EXECUTION ---
 st.title("ArchiTek // Market Intelligence")
-st.markdown("Automating the path from **Academic Research** to **Market Dominance**.")
+st.caption("Turning Academic Research into Market Dominance.")
 
 c1, c2 = st.columns(2)
-with c1: url_in = st.text_input("arXiv URL", placeholder="https://arxiv.org/abs/...")
-with c2: file_in = st.file_uploader("Upload PDF", type=["pdf"])
+with c1: url = st.text_input("arXiv URL", placeholder="https://arxiv.org/abs/...")
+with c2: up_file = st.file_uploader("Or Upload PDF", type=["pdf"])
 
-if st.button("Execute Strategic Audit") and active_key:
-    stream = download_arxiv_pdf(url_in) if url_in else file_in
+if st.button("Execute Strategic Audit") and auth_key:
+    stream = None
+    if url:
+        try:
+            id_match = re.search(r'(\d{4}\.\d{4,5})', url)
+            res = requests.get(f"https://arxiv.org/pdf/{id_match.group(1)}.pdf", timeout=20)
+            stream = BytesIO(res.content)
+        except: st.error("arXiv URL Error")
+    else: stream = up_file
+
     if stream:
-        with st.spinner("Auditing Market & Tech..."):
+        with st.spinner("Auditing..."):
             try:
-                genai.configure(api_key=active_key)
-                pdf = PdfReader(stream)
-                raw_text = "".join([p.extract_text() for p in pdf.pages])
+                genai.configure(api_key=auth_key)
+                reader = PdfReader(stream)
+                data = "".join([p.extract_text() for p in reader.pages])
                 
-                # Auto-model selection
-                available = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-                model_name = next((m for m in available if 'flash' in m), available[0]).split('/')[-1]
-                model = genai.GenerativeModel(model_name)
+                models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                m_name = next((m for m in models if 'flash' in m), models[0]).split('/')[-1]
                 
-                response = model.generate_content(get_persona_prompt(user_persona, target_industry, raw_text))
-                st.session_state.analysis_result = response.text
+                resp = genai.GenerativeModel(m_name).generate_content(get_strategic_prompt(user_role, industry, data))
+                
+                st.markdown("---")
+                st.markdown(resp.text)
+                
+                dot_match = re.search(r'```dot\n(.*?)\n```', resp.text, re.DOTALL)
+                if dot_match:
+                    st.graphviz_chart(dot_match.group(1))
             except Exception as e:
-                st.error(f"Audit Failed: {str(e)}")
-
-# --- 6. OUTPUT & VISUALS ---
-if st.session_state.analysis_result:
-    st.markdown("---")
-    st.markdown(st.session_state.analysis_result)
-    
-    match = re.search(r'```dot\n(.*?)\n```', st.session_state.analysis_result, re.DOTALL)
-    if match:
-        st.subheader("🏗️ System Flow")
-        st.graphviz_chart(match.group(1))
-
-    st.download_button("📥 Download Intelligence Report", st.session_state.analysis_result.encode('utf-8'), f"ArchiTek_Audit.md")
+                st.error(f"Error: {e}")
