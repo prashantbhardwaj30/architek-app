@@ -6,19 +6,42 @@ import google.generativeai as genai
 from PyPDF2 import PdfReader
 from io import BytesIO
 
-# --- 1. CONFIGURATION & STEALTH CSS ---
-st.set_page_config(page_title="ArchiTek | Intel Engine", page_icon="🎄", layout="wide")
+# --- 1. CONFIGURATION & ULTIMATE STEALTH CSS ---
+st.set_page_config(page_title="ArchiTek | Market Intel", page_icon="🎄", layout="wide")
 
 st.markdown("""
 <style>
-    #MainMenu, footer, header, .stAppDeployButton, [data-testid="stStatusWidget"], [data-testid="stDecoration"] {
-        visibility: hidden !important; display: none !important;
+    /* 1. HIDE ALL STREAMLIT BRANDING GHOSTS */
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    
+    /* 2. SPECIFICALLY TARGET THE MANAGE APP & GITHUB BUTTONS */
+    .stAppDeployButton {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    
+    /* 3. ENSURE SIDEBAR IS VISIBLE BUT CLEAN */
+    [data-testid="stSidebar"] {
+        background-color: #0d1117;
+        border-right: 1px solid #30363D;
+        visibility: visible !important;
     }
-    [data-testid="stToolbar"] { visibility: hidden !important; display: none !important; }
+    
+    /* 4. BLACK OPS THEME REFINEMENT */
     .stApp {background-color: #0E1117; color: #E6E6E6;}
     .stTextInput > div > div > input { background-color: #161B22; color: #FAFAFA; border: 1px solid #30363D; }
-    .stButton > button { background-color: #238636 !important; color: white !important; font-weight: bold; border: none !important; }
-    [data-testid="stSidebar"] { background-color: #0d1117; border-right: 1px solid #30363D; }
+    
+    /* 5. BUTTON STYLING */
+    .stButton > button { 
+        background-color: #238636 !important; 
+        color: white !important; 
+        font-weight: bold; 
+        border: none !important; 
+        width: 100%;
+    }
+    
+    /* 6. FIX TOP PADDING */
     .block-container { padding-top: 1rem !important; }
 </style>
 """, unsafe_allow_html=True)
@@ -27,15 +50,15 @@ st.markdown("""
 if "analysis_result" not in st.session_state:
     st.session_state.analysis_result = None
 
-# --- 3. AUTH & BRANDED SIDEBAR ---
+# --- 3. THE BRANDED SIDEBAR (THE MISSION BRIEF) ---
 try:
     sponsor_key = st.secrets["GOOGLE_API_KEY"]
 except:
     sponsor_key = None
 
 with st.sidebar:
-    st.title("🏛️ ArchiTek // V5.2")
-    st.caption("Market Intelligence Engine")
+    st.title("🏛️ ArchiTek // V6")
+    st.caption("Strategic Intelligence Engine")
     st.markdown("---")
     
     st.subheader("🎯 Mission Brief")
@@ -43,55 +66,39 @@ with st.sidebar:
         "Your Role",
         ("Venture Capital Partner", "Chief Technology Officer", "Staff Software Engineer", "Brand & Content Lead")
     )
-    target_industry = st.text_input("Target Sector", value="General", help="e.g., Fintech, HealthTech, Supply Chain")
+    target_industry = st.text_input("Target Sector", value="General")
     
     st.markdown("---")
     active_key = sponsor_key or st.text_input("Enter API Key", type="password")
 
+    # --- SOCIAL INTEGRATION ---
     st.subheader("🔗 Connect")
     st.markdown(f"""
-        <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank"><button style="width: 100%; background-color: #0077B5; color: white; border: none; padding: 8px; border-radius: 5px; margin-bottom: 5px; font-weight: bold; cursor: pointer;">LinkedIn Profile</button></a>
-        <a href="https://www.youtube.com/@DesiAILabs" target="_blank"><button style="width: 100%; background-color: #FF0000; color: white; border: none; padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer;">YouTube Channel</button></a>
+        <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank"><button style="width: 100%; background-color: #0077B5; color: white; border: none; padding: 10px; border-radius: 5px; margin-bottom: 8px; font-weight: bold; cursor: pointer;">LinkedIn Profile</button></a>
+        <a href="https://www.youtube.com/@DesiAILabs" target="_blank"><button style="width: 100%; background-color: #FF0000; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer;">YouTube Channel</button></a>
     """, unsafe_allow_html=True)
 
+    # --- FUNNEL INTEGRATION ---
     st.markdown("""
     <div style="background-color: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d; margin-top: 10px;">
         <h4 style="margin: 0; color: #FAFAFA; font-size: 14px;">🎓 Master AI Build</h4>
         <a href="https://aigurukul.lovable.app" target="_blank" style="text-decoration: none;">
-            <button style="width: 100%; background-color: #238636; color: white; border: none; padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer;">Join AI Gurukul</button>
+            <button style="width: 100%; background-color: #238636; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top:10px;">Join AI Gurukul</button>
         </a>
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. STRATEGIC LOGIC ---
+# --- 4. STRATEGIC PROMPT LOGIC ---
 def get_persona_prompt(role, industry, text):
-    # Added the Market Heatmap & Saturation Audit to the base logic
     base = f"Analyze this research for the {industry} sector in 2026. Context: {text[:80000]}."
-    
     if role == "Venture Capital Partner":
-        return f"""{base} 
-        1. **Market Heatmap:** Rate the current 'Hotness' vs 'Saturation' of this idea in {industry}. 
-        2. **The Wedge:** Smallest entry point. 
-        3. **Decision Door:** (Table: Reversible vs Irreversible risks). 
-        4. **ROI Forecast:** Why this is a 10x play or a waste of capital."""
-    
+        return f"{base} 1. Market Heatmap (Hotness vs Saturation), 2. The Wedge, 3. Decision Door Table, 4. ROI Forecast."
     elif role == "Chief Technology Officer":
-        return f"""{base} 
-        1. **Friction Score (1-10):** Implementation difficulty. 
-        2. **Technical Moat:** Can someone clone this with a basic prompt? 
-        3. **Architecture (Graphviz DOT):** System logic flow in ```dot tags."""
-    
+        return f"{base} 1. Friction Score, 2. Technical Moat, 3. System Architecture Diagram (Graphviz DOT code in ```dot tags)."
     elif role == "Staff Software Engineer":
-        return f"""{base} 
-        1. **The Hack:** Shortest path to MVP. 
-        2. **Agent Protocol:** Full .cursorrules instructions for AI code editors. 
-        3. **Logic Map (Graphviz DOT):** Data pipeline in ```dot tags."""
-    
+        return f"{base} 1. Shortest MVP Path, 2. Full .cursorrules instructions, 3. Data Pipeline Diagram (Graphviz DOT code in ```dot tags)."
     elif role == "Brand & Content Lead":
-        return f"""{base} 
-        1. **The ROI Hook:** Why this matters for business. 
-        2. **Viral Blueprint:** LinkedIn/YouTube script. 
-        3. **Industry 'Counter-Intuitive' Insight:** The one thing competitors are getting wrong."""
+        return f"{base} 1. ROI Value Hook, 2. LinkedIn/YouTube Script, 3. Counter-Intuitive Insight."
     return base
 
 def download_arxiv_pdf(url):
@@ -100,7 +107,7 @@ def download_arxiv_pdf(url):
     response = requests.get(f"https://arxiv.org/pdf/{arxiv_id_match.group(1)}.pdf", timeout=30)
     return BytesIO(response.content) if response.status_code == 200 else None
 
-# --- 5. EXECUTION ---
+# --- 5. MAIN INTERFACE ---
 st.title("ArchiTek // Market Intelligence")
 st.markdown("Automating the path from **Academic Research** to **Market Dominance**.")
 
@@ -117,7 +124,7 @@ if st.button("Execute Strategic Audit") and active_key:
                 pdf = PdfReader(stream)
                 raw_text = "".join([p.extract_text() for p in pdf.pages])
                 
-                # Model selection
+                # Auto-model selection
                 available = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
                 model_name = next((m for m in available if 'flash' in m), available[0]).split('/')[-1]
                 model = genai.GenerativeModel(model_name)
@@ -127,7 +134,7 @@ if st.button("Execute Strategic Audit") and active_key:
             except Exception as e:
                 st.error(f"Audit Failed: {str(e)}")
 
-# --- 6. OUTPUT ---
+# --- 6. OUTPUT & VISUALS ---
 if st.session_state.analysis_result:
     st.markdown("---")
     st.markdown(st.session_state.analysis_result)
