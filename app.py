@@ -651,13 +651,30 @@ st.set_page_config(
 # Custom CSS
 st.markdown("""
 <style>
-    /* Hide Streamlit branding */
-    header, footer, .stAppDeployButton, 
+    /* Hide Streamlit branding BUT keep sidebar toggle */
+    footer, .stAppDeployButton, 
     [data-testid="stStatusWidget"], 
     [data-testid="stToolbar"], 
     [data-testid="stDecoration"] {
         visibility: hidden !important;
         display: none !important;
+    }
+    
+    /* Keep header but make it minimal - preserves sidebar toggle */
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        height: 3rem !important;
+    }
+    
+    /* Ensure sidebar collapse button is always visible */
+    button[data-testid="stSidebarCollapseButton"],
+    button[data-testid="baseButton-header"] {
+        visibility: visible !important;
+        display: flex !important;
+        opacity: 1 !important;
+        background: #161b22 !important;
+        border: 1px solid #30363d !important;
+        color: #e6e6e6 !important;
     }
     
     /* Dark theme */
@@ -666,10 +683,17 @@ st.markdown("""
         color: #e6e6e6;
     }
     
-    /* Sidebar */
+    /* Sidebar - ensure visibility */
     section[data-testid="stSidebar"] {
         background: linear-gradient(180deg, #0d1117 0%, #161b22 100%) !important;
         border-right: 1px solid #30363d !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+    
+    /* Sidebar content visibility */
+    section[data-testid="stSidebar"] > div {
+        visibility: visible !important;
     }
     
     section[data-testid="stSidebar"] .stSelectbox label,
@@ -1001,36 +1025,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Role & Industry selection
-    st.subheader("🎯 Analysis Profile")
-    
-    user_role = st.selectbox(
-        "Your Role",
-        list(ROLE_TEMPLATES.keys()),
-        help="Tailors the analysis to your decision-making needs"
-    )
-    
-    # Industry with heat indicators
-    industry_options = ["General"] + list(TRENDING_SECTORS.keys())
-    industry = st.selectbox(
-        "Target Sector",
-        industry_options,
-        help="Adds sector-specific intelligence"
-    )
-    
-    # Show sector heat if selected
-    if industry in TRENDING_SECTORS:
-        sector = TRENDING_SECTORS[industry]
-        st.markdown(f"""
-        <div class="metric-card">
-            <h4>Sector Heat Index</h4>
-            <div class="value">{sector['heat']}/100</div>
-            <div class="delta">{sector['velocity']} growth</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
     # Platform stats (real data)
     stats = get_platform_stats()
     
@@ -1109,11 +1103,61 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown("---")
 st.markdown("### 🔍 Analyze Your Research")
-# Input section
+# STREET-SMART FIX: Critical selections INLINE (not hidden in sidebar)
+st.markdown("""
+<div style="background: linear-gradient(135deg, #161b22, #1c2128); border: 1px solid #30363d; 
+            border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+    <p style="color: #8b949e; font-size: 0.9rem; margin: 0;">
+        ⚙️ <strong style="color: #e6e6e6;">Configure your analysis below</strong> — Select your role, target sector, and enter your API key
+    </p>
+</div>
+""", unsafe_allow_html=True)
+# Configuration row - Role, Industry, API Key all visible
+config_col1, config_col2, config_col3 = st.columns([1, 1, 1])
+with config_col1:
+    user_role = st.selectbox(
+        "🎯 Your Role",
+        list(ROLE_TEMPLATES.keys()),
+        help="Tailors the analysis to your decision-making needs",
+        key="main_role"
+    )
+with config_col2:
+    industry_options = ["General"] + list(TRENDING_SECTORS.keys())
+    industry = st.selectbox(
+        "📊 Target Sector",
+        industry_options,
+        help="Adds sector-specific intelligence",
+        key="main_industry"
+    )
+with config_col3:
+    api_key = st.text_input(
+        "🔑 Google AI API Key",
+        type="password",
+        placeholder="Enter your Gemini API key",
+        help="Get free key at ai.google.dev",
+        key="main_api_key"
+    )
+# Show sector heat if trending sector selected
+if industry in TRENDING_SECTORS:
+    sector_data = TRENDING_SECTORS[industry]
+    st.markdown(f"""
+    <div style="background: rgba(35, 134, 54, 0.1); border: 1px solid rgba(35, 134, 54, 0.3); 
+                border-radius: 8px; padding: 12px; margin: 10px 0; display: flex; gap: 20px; flex-wrap: wrap;">
+        <span style="color: #3fb950;"><strong>🔥 {industry}</strong></span>
+        <span style="color: #8b949e;">Heat: <strong style="color: #e6e6e6;">{sector_data['heat']}/100</strong></span>
+        <span style="color: #8b949e;">Growth: <strong style="color: #3fb950;">{sector_data['velocity']}</strong></span>
+        <span style="color: #8b949e;">Stage: <strong style="color: #e6e6e6;">{sector_data['stage']}</strong></span>
+    </div>
+    """, unsafe_allow_html=True)
+# Authenticate user if API key provided
+if api_key:
+    st.session_state.user = get_or_create_user(api_key)
+st.markdown("")  # Spacing
+# Input section - Research URL and PDF
 col1, col2 = st.columns([2, 1])
 with col1:
     url_input = st.text_input(
-        "Research URL",
+        "📄 Research URL",
         placeholder="https://arxiv.org/abs/2401.12345",
         help="Supports arXiv, bioRxiv, medRxiv, or direct PDF links"
     )
