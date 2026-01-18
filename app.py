@@ -958,8 +958,27 @@ with st.sidebar:
         )
         
         if "Pro" in selected_tier or "Enterprise" in selected_tier:
-            st.info("📧 Contact sales@architek.ai for activation")
-            st.link_button("💳 Upgrade to Pro", "https://buy.stripe.com/test_architek", use_container_width=True)
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #161b22, #1c2128); border: 1px solid #30363d; 
+                        border-radius: 12px; padding: 20px; margin: 10px 0;">
+                <h4 style="color: #ffffff; margin: 0 0 10px 0;">🚀 Upgrade to Pro</h4>
+                <p style="color: #8b949e; font-size: 0.9rem; margin-bottom: 15px;">
+                    Pay via PayPal and send your email to activate Pro features instantly.
+                </p>
+                <ul style="color: #e6e6e6; font-size: 0.9rem; margin-bottom: 15px; padding-left: 20px;">
+                    <li>✅ 25 reports/day</li>
+                    <li>✅ 100 page PDFs</li>
+                    <li>✅ Export to Markdown</li>
+                    <li>✅ Priority support via WhatsApp</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.link_button("💳 Pay $49 via PayPal", "https://paypal.me/PrashantBhardwaj/49", use_container_width=True)
+            with col2:
+                st.link_button("💬 Confirm on WhatsApp", "https://wa.me/917507333307?text=Hi!%20I%20just%20paid%20for%20ArchiTek%20Pro.%20My%20email%20is:", use_container_width=True)
     
     api_key = sponsor_key or st.text_input(
         "API Key",
@@ -1058,13 +1077,13 @@ with st.sidebar:
 # Header
 st.title("ArchiTek // Market Intelligence")
 st.markdown("**Transform research papers into business & revenue models.** Trusted by elite operators.")
-# Social Proof Banner
+# Social Proof Banner - Authentic Early Adopter Messaging
 st.markdown("""
 <div class="social-proof">
-    <div class="item"><span class="num">500+</span> Reports Generated</div>
-    <div class="item"><span class="num">50+</span> VCs & Founders</div>
+    <div class="item"><span class="num">🚀</span> Early Access</div>
+    <div class="item"><span class="num">FREE</span> Beta Launch</div>
     <div class="item"><span class="num">8</span> Trending Sectors</div>
-    <div class="item"><span class="num">24/7</span> Intelligence Engine</div>
+    <div class="item"><span class="num">AI</span> Powered Engine</div>
 </div>
 """, unsafe_allow_html=True)
 # How It Works Section - At TOP for clarity
@@ -1395,6 +1414,33 @@ if generate_clicked and api_key:
     # Report complete
     st.markdown("---")
     st.success(f"✅ Report generated successfully! {remaining - 1} reports remaining today.")
+    
+    # Feedback & Share Section - Critical for MEP iteration
+    st.markdown("### 📝 Was this helpful?")
+    fb_col1, fb_col2, fb_col3, fb_col4 = st.columns([1, 1, 2, 2])
+    
+    with fb_col1:
+        if st.button("👍 Helpful", use_container_width=True):
+            log_usage(st.session_state.user["id"], "feedback_positive")
+            st.toast("🙏 Thanks for the feedback!")
+    
+    with fb_col2:
+        if st.button("👎 Not useful", use_container_width=True):
+            log_usage(st.session_state.user["id"], "feedback_negative")
+            st.toast("📝 We'll improve! Consider sharing details via WhatsApp.")
+    
+    with fb_col3:
+        # Twitter/X share button
+        import urllib.parse
+        tweet_text = f"Just analyzed a research paper with ArchiTek 🏛️\n\nGot market sizing, timing score, and investment recommendations in 60 seconds.\n\nGame changer for VCs and founders. 🔥\n\n#AI #VC #Startup"
+        tweet_url = f"https://twitter.com/intent/tweet?text={urllib.parse.quote(tweet_text)}"
+        st.link_button("🐦 Share on X", tweet_url, use_container_width=True)
+    
+    with fb_col4:
+        # WhatsApp share
+        wa_text = f"Check out ArchiTek - it converts research papers into business intelligence instantly! https://architek.ai"
+        wa_url = f"https://wa.me/?text={urllib.parse.quote(wa_text)}"
+        st.link_button("💬 Share on WhatsApp", wa_url, use_container_width=True)
 # ═══════════════════════════════════════════════════════════════════════════════
 # 11. FOOTER
 # ═══════════════════════════════════════════════════════════════════════════════
