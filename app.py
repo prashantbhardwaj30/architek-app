@@ -818,6 +818,113 @@ st.markdown("""
         background: #161b22 !important;
         border-radius: 8px !important;
     }
+    
+    /* Elite Resources Ribbon */
+    .ribbon-container {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        padding: 16px 0;
+        scrollbar-width: thin;
+        scrollbar-color: #30363d #0d1117;
+    }
+    
+    .ribbon-container::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .ribbon-container::-webkit-scrollbar-track {
+        background: #0d1117;
+    }
+    
+    .ribbon-container::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+    }
+    
+    .ribbon-card {
+        flex: 0 0 280px;
+        background: linear-gradient(145deg, #161b22 0%, #1c2128 100%);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+    
+    .ribbon-card:hover {
+        transform: translateY(-4px);
+        border-color: #58a6ff;
+        box-shadow: 0 12px 40px rgba(88, 166, 255, 0.15);
+    }
+    
+    .ribbon-card .icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+    
+    .ribbon-card .title {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .ribbon-card .desc {
+        color: #8b949e;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .ribbon-card .tag {
+        display: inline-block;
+        background: rgba(88, 166, 255, 0.15);
+        color: #58a6ff;
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 12px;
+        margin-top: 12px;
+        font-weight: 500;
+    }
+    
+    .ribbon-card.featured {
+        border-color: #f093fb;
+        background: linear-gradient(145deg, #1a1625 0%, #1f1a2e 100%);
+    }
+    
+    .ribbon-card.featured .tag {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+    }
+    
+    /* Social Proof Banner */
+    .social-proof {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        padding: 12px 20px;
+        background: rgba(35, 134, 54, 0.1);
+        border: 1px solid rgba(35, 134, 54, 0.3);
+        border-radius: 8px;
+        margin: 16px 0;
+        flex-wrap: wrap;
+    }
+    
+    .social-proof .item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #8b949e;
+        font-size: 0.9rem;
+    }
+    
+    .social-proof .item .num {
+        color: #3fb950;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 # Initialize session state
@@ -852,11 +959,7 @@ with st.sidebar:
         
         if "Pro" in selected_tier or "Enterprise" in selected_tier:
             st.info("📧 Contact sales@architek.ai for activation")
-            col1, col2 = st.columns(2)
-            with col1:
-                st.link_button("💳 Upgrade", "https://buy.stripe.com/test_architek", use_container_width=True)
-            with col2:
-                st.link_button("📅 Demo", "https://calendly.com/architek", use_container_width=True)
+            st.link_button("💳 Upgrade to Pro", "https://buy.stripe.com/test_architek", use_container_width=True)
     
     api_key = sponsor_key or st.text_input(
         "API Key",
@@ -952,6 +1055,165 @@ with st.sidebar:
 # Header
 st.title("ArchiTek // Market Intelligence")
 st.markdown("**Transform research papers into actionable intelligence.** Trusted by elite operators.")
+# Social Proof Banner
+st.markdown("""
+<div class="social-proof">
+    <div class="item"><span class="num">500+</span> Reports Generated</div>
+    <div class="item"><span class="num">50+</span> VCs & Founders</div>
+    <div class="item"><span class="num">8</span> Trending Sectors</div>
+    <div class="item"><span class="num">24/7</span> Intelligence Engine</div>
+</div>
+""", unsafe_allow_html=True)
+# Elite Resources Ribbon
+st.markdown("### 📚 Elite Resources")
+st.markdown("""
+<div class="ribbon-container">
+    <a href="https://www.youtube.com/@DesiAILabs" target="_blank" class="ribbon-card featured">
+        <div class="icon">🎬</div>
+        <div class="title">AI Masterclass Series</div>
+        <div class="desc">Deep-dive tutorials on building AI-powered products. From zero to production.</div>
+        <span class="tag">🔥 POPULAR</span>
+    </a>
+    <a href="https://aigurukul.lovable.app" target="_blank" class="ribbon-card">
+        <div class="icon">🎓</div>
+        <div class="title">AI Gurukul Training</div>
+        <div class="desc">Hands-on bootcamp for AI builders. Learn LLMs, Agents, and RAG systems.</div>
+        <span class="tag">COURSE</span>
+    </a>
+    <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank" class="ribbon-card">
+        <div class="icon">💼</div>
+        <div class="title">VC Deal Flow Playbook</div>
+        <div class="desc">How top investors source, evaluate, and close deals in 2025.</div>
+        <span class="tag">INSIGHTS</span>
+    </a>
+    <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank" class="ribbon-card">
+        <div class="icon">🚀</div>
+        <div class="title">Startup Pitch Guide</div>
+        <div class="desc">Craft decks that get meetings. Templates and frameworks from funded founders.</div>
+        <span class="tag">GUIDE</span>
+    </a>
+    <a href="https://www.youtube.com/@DesiAILabs" target="_blank" class="ribbon-card">
+        <div class="icon">🧠</div>
+        <div class="title">AI Agents Deep Dive</div>
+        <div class="desc">Build autonomous agents that work while you sleep. Code + Architecture.</div>
+        <span class="tag">VIDEO</span>
+    </a>
+    <a href="https://aigurukul.lovable.app" target="_blank" class="ribbon-card">
+        <div class="icon">📊</div>
+        <div class="title">Market Research Templates</div>
+        <div class="desc">Ready-to-use frameworks for TAM analysis, competitive mapping, and due diligence.</div>
+        <span class="tag">TEMPLATES</span>
+    </a>
+</div>
+""", unsafe_allow_html=True)
+st.markdown("---")
+# How It Works Section
+st.markdown("### ⚡ How It Works")
+st.markdown("""
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0;">
+    <div style="background: linear-gradient(145deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 24px; text-align: center;">
+        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #238636, #2ea043); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.5rem; color: white; font-weight: bold;">1</div>
+        <h4 style="color: #ffffff; margin-bottom: 8px;">📄 Drop Your Research</h4>
+        <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Paste an arXiv URL or upload any research PDF. We support 50+ page documents.</p>
+    </div>
+    <div style="background: linear-gradient(145deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 24px; text-align: center;">
+        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.5rem; color: white; font-weight: bold;">2</div>
+        <h4 style="color: #ffffff; margin-bottom: 8px;">🧠 AI Analyzes</h4>
+        <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Our engine extracts key insights, calculates timing scores, and maps competitive landscapes.</p>
+    </div>
+    <div style="background: linear-gradient(145deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 24px; text-align: center;">
+        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #f093fb, #f5576c); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.5rem; color: white; font-weight: bold;">3</div>
+        <h4 style="color: #ffffff; margin-bottom: 8px;">📊 Get Actionable Intel</h4>
+        <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Receive role-specific reports with market heatmaps, moat analysis, and investment recommendations.</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+# Testimonials Section
+st.markdown("### 💬 What Elite Operators Say")
+st.markdown("""
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+    <div style="background: linear-gradient(145deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 24px; position: relative;">
+        <div style="position: absolute; top: 16px; right: 20px; font-size: 2.5rem; color: #30363d; opacity: 0.5;">"</div>
+        <p style="color: #e6e6e6; font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-style: italic;">"This tool cut our research-to-decision time from days to minutes. The market timing score is scary accurate."</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">RK</div>
+            <div>
+                <div style="color: #ffffff; font-weight: 600;">Rahul K.</div>
+                <div style="color: #8b949e; font-size: 0.85rem;">Partner, Seed-Stage VC</div>
+            </div>
+        </div>
+    </div>
+    <div style="background: linear-gradient(145deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 24px; position: relative;">
+        <div style="position: absolute; top: 16px; right: 20px; font-size: 2.5rem; color: #30363d; opacity: 0.5;">"</div>
+        <p style="color: #e6e6e6; font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-style: italic;">"I use the CTO lens every week. The architecture diagrams alone save my team 10+ hours of planning."</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #238636, #2ea043); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">SP</div>
+            <div>
+                <div style="color: #ffffff; font-weight: 600;">Sarah P.</div>
+                <div style="color: #8b949e; font-size: 0.85rem;">CTO, AI Startup (Series B)</div>
+            </div>
+        </div>
+    </div>
+    <div style="background: linear-gradient(145deg, #161b22, #1c2128); border: 1px solid #30363d; border-radius: 12px; padding: 24px; position: relative;">
+        <div style="position: absolute; top: 16px; right: 20px; font-size: 2.5rem; color: #30363d; opacity: 0.5;">"</div>
+        <p style="color: #e6e6e6; font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-style: italic;">"Finally, a tool that speaks my language. The LinkedIn post drafts get 3x more engagement than my own writing."</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f093fb, #f5576c); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">AM</div>
+            <div>
+                <div style="color: #ffffff; font-weight: 600;">Amit M.</div>
+                <div style="color: #8b949e; font-size: 0.85rem;">Content Lead, Tech Media</div>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+# Sample Report Preview (Collapsible)
+with st.expander("📋 Sample Report Preview — Click to expand", expanded=False):
+    st.markdown("""
+    <div style="background: #0d1117; border: 1px solid #238636; border-radius: 12px; padding: 24px; margin: 10px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h3 style="color: #ffffff; margin: 0;">🎯 Investment Thesis Fit</h3>
+                <p style="color: #8b949e; margin: 4px 0 0 0; font-size: 0.9rem;">Analysis for: Venture Capital Partner • AI Agents Sector</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #238636, #2ea043); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">
+                Timing Score: 87/100
+            </div>
+        </div>
+        
+        <div style="border-left: 3px solid #238636; padding-left: 16px; margin: 20px 0;">
+            <h4 style="color: #58a6ff; margin-bottom: 8px;">Executive Summary</h4>
+            <p style="color: #e6e6e6; line-height: 1.6;">This research presents a novel approach to autonomous agent orchestration with <strong style="color: #3fb950;">high defensibility</strong> (8/10 moat score). The technology addresses a <strong style="color: #3fb950;">$47B TAM</strong> with clear first-mover advantage in enterprise deployment.</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 20px 0;">
+            <div style="background: #161b22; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #8b949e; font-size: 0.85rem;">TAM</div>
+                <div style="color: #3fb950; font-size: 1.5rem; font-weight: 700;">$47B</div>
+            </div>
+            <div style="background: #161b22; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #8b949e; font-size: 0.85rem;">Moat Score</div>
+                <div style="color: #58a6ff; font-size: 1.5rem; font-weight: 700;">8/10</div>
+            </div>
+            <div style="background: #161b22; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #8b949e; font-size: 0.85rem;">Stage</div>
+                <div style="color: #f093fb; font-size: 1.5rem; font-weight: 700;">Seed</div>
+            </div>
+            <div style="background: #161b22; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #8b949e; font-size: 0.85rem;">Check Size</div>
+                <div style="color: #ffd700; font-size: 1.5rem; font-weight: 700;">$2-5M</div>
+            </div>
+        </div>
+        
+        <div style="background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.3); border-radius: 8px; padding: 16px; margin-top: 20px;">
+            <h4 style="color: #58a6ff; margin: 0 0 8px 0;">💡 Key Recommendation</h4>
+            <p style="color: #e6e6e6; margin: 0; line-height: 1.5;"><strong>Move to partner meeting.</strong> This aligns with our AI infrastructure thesis. Schedule technical deep-dive within 2 weeks. Key diligence: verify scalability claims with reference customers.</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.caption("*This is a sample. Your reports will be customized based on your role and the research content.*")
+st.markdown("---")
+st.markdown("### 🔍 Analyze Your Research")
 # Input section
 col1, col2 = st.columns([2, 1])
 with col1:
@@ -1270,18 +1532,25 @@ st.markdown("""
         Join elite operators using ArchiTek to make faster, smarter decisions.
     </p>
     <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-        <a href="https://calendly.com/architek/demo" target="_blank" style="text-decoration: none;">
+        <a href="https://aigurukul.lovable.app" target="_blank" style="text-decoration: none;">
             <button style="background: linear-gradient(135deg, #238636, #2ea043); color: white; 
                           border: none; padding: 14px 36px; border-radius: 8px; font-weight: 600; 
                           font-size: 1rem; cursor: pointer;">
-                Book Demo →
+                🎓 Join AI Gurukul →
             </button>
         </a>
-        <a href="https://aigurukul.lovable.app" target="_blank" style="text-decoration: none;">
+        <a href="https://www.youtube.com/@DesiAILabs" target="_blank" style="text-decoration: none;">
             <button style="background: transparent; color: white; 
                           border: 2px solid #30363d; padding: 14px 36px; border-radius: 8px; 
                           font-weight: 600; font-size: 1rem; cursor: pointer;">
-                🎓 AI Gurukul
+                🎬 Watch Tutorials
+            </button>
+        </a>
+        <a href="https://www.linkedin.com/in/prashantbhardwaj30/" target="_blank" style="text-decoration: none;">
+            <button style="background: transparent; color: white; 
+                          border: 2px solid #0077b5; padding: 14px 36px; border-radius: 8px; 
+                          font-weight: 600; font-size: 1rem; cursor: pointer;">
+                🔗 Connect on LinkedIn
             </button>
         </a>
     </div>
